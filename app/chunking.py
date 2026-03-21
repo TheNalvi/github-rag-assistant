@@ -1,11 +1,27 @@
-def chunk_document(text, chunk_size=500, chunk_overlap=50):
-    chunks = []
-    text_len = len(text)
-    start = 0
+from langchain_text_splitters import Language, RecursiveCharacterTextSplitter
     
-    while start < text_len:
-        chunk = text[start:start + chunk_size - chunk_overlap]
-        chunks.append(chunk)
-        start += chunk_size - chunk_overlap
-        
-    return chunks
+def get_code_splitter(file_extension, chunk_size=1000, chunk_overlap=100):
+    extension_map = {
+        '.py': Language.PYTHON,
+        '.js': Language.JS,
+        '.ts': Language.TS,
+        '.go': Language.GO,
+        '.cpp': Language.CPP,
+        '.java': Language.JAVA,
+        '.php': Language.PHP,
+        '.rb': Language.RUBY,
+        '.rs': Language.RUST,
+    }
+    
+    lang = extension_map.get(file_extension.lower())
+    if lang:
+        return RecursiveCharacterTextSplitter.from_language(
+            language=lang, 
+            chunk_size=chunk_size, 
+            chunk_overlap=chunk_overlap
+        )
+    else:
+        RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size, 
+            chunk_overlap=chunk_overlap
+        )
