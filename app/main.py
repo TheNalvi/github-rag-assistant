@@ -1,4 +1,5 @@
 from ingestion import load_local_repo
+from dotenv import load_dotenv
 from chunking import get_code_splitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -7,6 +8,8 @@ import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+
+load_dotenv()
 
 docs = load_local_repo("../data/")
 all_chunks = []
@@ -26,7 +29,8 @@ for doc in docs:
 vector_db = FAISS.from_documents(all_chunks, embeddings)
 vector_db.save_local("faiss_index")
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyACYmCJtFfYGPqIRG4FFX8ouK-Nlsuu9iA"
+api_key = os.getenv("GOOGLE_API_KEY")
+os.environ["GOOGLE_API_KEY"] = api_key
 llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", temperature=0)
 
 template = """
@@ -45,7 +49,6 @@ ANSWER:
 """
 prompt = ChatPromptTemplate.from_template(template)
 
-# 3. Функция для получения ответа
 def ask_gemini(query, vector_db):
     docs = vector_db.similarity_search(query, k=3)
     context = "\n---\n".join([d.page_content for d in docs])
