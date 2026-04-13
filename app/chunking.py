@@ -21,7 +21,7 @@ def get_code_splitter(file_extension, chunk_size=1000, chunk_overlap=100):
             chunk_overlap=chunk_overlap
         )
     else:
-        RecursiveCharacterTextSplitter(
+        return RecursiveCharacterTextSplitter(
             chunk_size=chunk_size, 
             chunk_overlap=chunk_overlap
         )

@@ -1,6 +1,5 @@
 venvNew/
 __pycache__/
-*.pyc
 .env
-data/
+.git/
 faiss_index/
